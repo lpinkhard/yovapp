@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+  <item>
+    <color android:color="@android:color/white" />
+  </item>
+  <item
+      android:drawable="@drawable/yov_logo"
+      android:tileMode="disabled"
+      android:gravity="center" />
+</layer-list>
