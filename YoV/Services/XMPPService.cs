@@ -116,53 +116,58 @@ namespace YoV.Services
             bool finished = false;
             bool insideTag = false;
             int pch = -1;
-
-            do
+            try
             {
-                int ch = reader.Read();
-                if (ch == -1)
-                    continue;
-                if (!elements && (ch == ' ' || ch == '\r' || ch == '\n'))
-                    continue;
-
-                switch ((char)ch)
+                do
                 {
-                    case '<':
-                        elemDepth++;
-                        elements = true;
-                        insideTag = true;
-                        break;
-                    case '/':
-                        if (pch == '<')
-                        {
-                            elemDepth -= 2;
-                        }
-                        break;
-                    case '>':
-                        insideTag = false;
-                        if (sb.ToString().Contains("<stream:stream") ||
-                            sb.ToString().Contains("<?xml"))
-                        {
-                            elemDepth--;
-                        }
-                        else if (pch == '/')
-                        {
-                            elemDepth--;
-                        }
-                        break;
+                    int ch = reader.Read();
+                    if (ch == -1)
+                        continue;
+                    if (!elements && (ch == ' ' || ch == '\r' || ch == '\n'))
+                        continue;
+
+                    switch ((char)ch)
+                    {
+                        case '<':
+                            elemDepth++;
+                            elements = true;
+                            insideTag = true;
+                            break;
+                        case '/':
+                            if (pch == '<')
+                            {
+                                elemDepth -= 2;
+                            }
+                            break;
+                        case '>':
+                            insideTag = false;
+                            if (sb.ToString().Contains("<stream:stream") ||
+                                sb.ToString().Contains("<?xml"))
+                            {
+                                elemDepth--;
+                            }
+                            else if (pch == '/')
+                            {
+                                elemDepth--;
+                            }
+                            break;
+                    }
+
+                    if (ch != ' ' && ch != '\n' && ch != '\r')
+                        pch = ch;
+                    sb.Append((char)ch);
+
+                    if (elements && !insideTag && elemDepth < 1)
+                        finished = true;
+
+                    if (!threadRunning)
+                        finished = true;
                 }
-
-                if (ch != ' ' && ch != '\n' && ch != '\r')
-                    pch = ch;
-                sb.Append((char)ch);
-
-                if (elements && !insideTag && elemDepth < 1)
-                    finished = true;
-
-                if (!threadRunning)
-                    finished = true;
+                while (!finished);
+            } catch (IOException)
+            {
+                return null;
             }
-            while (!finished);
 
             string result = sb.ToString();
             if (result.Contains("<?xml"))
@@ -211,8 +216,12 @@ namespace YoV.Services
 
                     Debug.WriteLine("C: " + stanza);
 
-                    streamWriter.Write(stanza);
-                    streamWriter.Flush();
+                    if (streamWriter != null && streamWriter.BaseStream != null
+                        && streamWriter.BaseStream.CanWrite)
+                    {
+                        streamWriter.Write(stanza);
+                        streamWriter.Flush();
+                    }
                 }
                 Thread.Sleep(100);
             }
@@ -236,6 +245,11 @@ namespace YoV.Services
             do
             {
                 string stanza = ReadStanza(reader);
+                if (stanza == null)
+                {
+                    threadRunning = false;
+                    break;
+                }
 
                 XmlReader responseReader =
                 XmlReader.Create(
@@ -520,7 +534,10 @@ namespace YoV.Services
         private Task StartConnection()
         {
             if (connected)
-                return Task.CompletedTask;
+            {
+                StopConnection();
+                xmppClient = new TcpClient();
+            }
 
             xmppClient.Connect(server, 5222);
 
@@ -562,6 +579,8 @@ namespace YoV.Services
                     xmppClient.Close();
                 }
             }
+
+            requestQueue.Clear();
 
             return Task.CompletedTask;
         }
@@ -656,7 +675,10 @@ namespace YoV.Services
             {
                 Thread.Sleep(100);
                 if (currentState == SessionState.PRE_AUTH)
+                {
                     canLogin = true;
+                    loginStatus = LoginStatus.PENDING;
+                }
             } while (wait < 600 && !canLogin);
             wait = 0;
 
