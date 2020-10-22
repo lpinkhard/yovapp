@@ -662,7 +662,8 @@ namespace YoV.Services
             IQMessage(IQMessageType.GET, message, output);
         }
 
-        public Task<bool> LoginAsync(string username, string password)
+        public void Login(string username, string password,
+            Func<bool, bool> loginOutput)
         {
             StartConnection();
 
@@ -711,12 +712,12 @@ namespace YoV.Services
                         loginSuccess = true;
                 } while (wait < 600 && loginStatus == LoginStatus.PENDING);
 
-                return Task.FromResult(loginSuccess);
+                loginOutput(loginSuccess);
             }
             else
             {
                 StopConnection();
-                return Task.FromResult(false);
+                loginOutput(false);
             }
         }
 

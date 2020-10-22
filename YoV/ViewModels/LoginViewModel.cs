@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows.Input;
 using Xamarin.Forms;
 using YoV.Services;
@@ -14,6 +15,8 @@ namespace YoV.ViewModels
         private string password;
         private INavigation navigation;
         private XMPPService xmpp;
+
+        private bool IsBusy { get; set; }
 
         public string Username
         {
@@ -42,19 +45,39 @@ namespace YoV.ViewModels
             this.navigation = navigation;
             this.xmpp = DependencyService.Get<XMPPService>();
 
+            IsBusy = false;
             LoginCommand = new Command(OnLogin);
         }
 
-        public async void OnLogin()
+        public void OnLogin()
         {
-            if (await xmpp.LoginAsync(username, password))
+            if (!IsBusy)
             {
-                await navigation.PopModalAsync();
+                IsBusy = true;
+                Thread loginThread = new Thread(() => LoginThread(username, password));
+                loginThread.Start();
+            }
+        }
+
+        private void LoginThread(string username, string password)
+        {
+            xmpp.Login(username, password, OnLoginResult);
+        }
+
+        public bool OnLoginResult(bool success)
+        {
+            if (success)
+            {
+                navigation.PopModalAsync();
             }
             else
             {
                 DisplayInvalidLoginPrompt();
             }
+
+            IsBusy = false;
+
+            return true;
         }
     }
 }
