@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 using YoV.Models;
+using YoV.Services;
 
 namespace YoV.Views
 {
@@ -23,7 +25,27 @@ namespace YoV.Views
 
             MenuPages.Add((int)MenuItemType.Chat, (NavigationPage)Detail);
 
-            Navigation.PushModalAsync(new LoginPage());
+            string username = Preferences.Get("username", "");
+            string password = Preferences.Get("password", "");
+
+            if (username.Length > 0 && password.Length > 0)
+            {
+                XMPPService xmpp = DependencyService.Get<XMPPService>();
+                xmpp.Login(username, password, OnLoginOutput);
+            }
+            else
+            {
+                Navigation.PushModalAsync(new LoginPage());
+            }
+        }
+
+        private bool OnLoginOutput(bool success)
+        {
+            if (!success)
+            {
+                Navigation.PushModalAsync(new LoginPage());
+            }
+            return true;
         }
 
         public async Task NavigateFromMenu(int id)

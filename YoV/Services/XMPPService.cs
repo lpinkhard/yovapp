@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using Xamarin.Essentials;
 using YoV.Models;
 
 namespace YoV.Services
@@ -712,6 +713,11 @@ namespace YoV.Services
                         loginSuccess = true;
                 } while (wait < 600 && loginStatus == LoginStatus.PENDING);
 
+                if (loginSuccess)
+                {
+                    Preferences.Set("username", username);
+                    Preferences.Set("password", password);
+                }
                 loginOutput(loginSuccess);
             }
             else
