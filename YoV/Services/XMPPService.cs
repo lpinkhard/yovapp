@@ -16,7 +16,7 @@ namespace YoV.Services
 {
     public class XMPPService
     {
-        private List<Contact> roster;
+        private List<ContactCircle> roster;
         private string server;
         private Thread listenThread;
         private Thread processThread;
@@ -24,7 +24,6 @@ namespace YoV.Services
         private Stream listenStream;
         private StreamWriter streamWriter;
         private TcpClient xmppClient;
-        private bool openStream;
         private bool connected;
         private SessionState currentState;
         private LoginStatus loginStatus;
@@ -33,7 +32,6 @@ namespace YoV.Services
         private List<IQRequest> iqRequests;
         private bool resourceBinding;
         private bool usesSessions;
-        private bool presenceSent;
         private string jid;
         private RosterStatus rosterStatus;
         private Queue<string> requestQueue;
@@ -87,14 +85,13 @@ namespace YoV.Services
         public XMPPService()
         {
             server = "myyovproto.westus2.cloudapp.azure.com";
-            roster = new List<Contact>();
+            roster = new List<ContactCircle>();
             listenThread = null;
             processThread = null;
             threadRunning = false;
             listenStream = null;
             streamWriter = null;
             xmppClient = new TcpClient();
-            openStream = false;
             connected = false;
             currentState = SessionState.DISCONNECTED;
             authMechanisms = new List<AuthMechanism>();
@@ -105,7 +102,6 @@ namespace YoV.Services
             usesSessions = false;
             jid = "";
             rosterStatus = RosterStatus.READY;
-            presenceSent = false;
             requestQueue = new Queue<string>();
             lastKeepalive = DateTimeOffset.Now.ToUnixTimeSeconds();
             messages = new List<Message>();
@@ -181,12 +177,10 @@ namespace YoV.Services
                 return ReadStanza(reader);
             else if (result.Contains("<stream:stream"))
             {
-                openStream = true;
                 return ReadStanza(reader);
             }
             else if (result.Contains("</stream:stream"))
             {
-                openStream = false;
                 return ReadStanza(reader);
             }
 
@@ -512,14 +506,21 @@ namespace YoV.Services
                             pendingMessages = true;
                         }
 
-                        foreach (Contact c in roster)
+                        bool foundContact = false;
+                        foreach (ContactCircle cc in roster)
                         {
-                            if (c.Username.Equals(newMessage.User))
+                            foreach (Contact c in cc)
                             {
-                                notificationManager.ScheduleNotification(
-                                    c.DisplayName, newMessage.Content);
-                                break;
+                                if (c.Username.Equals(newMessage.User))
+                                {
+                                    notificationManager.ScheduleNotification(
+                                        c.DisplayName, newMessage.Content);
+                                    foundContact = true;
+                                    break;
+                                }
                             }
+                            if (foundContact)
+                                break;
                         }
                     }
                 }
@@ -784,6 +785,7 @@ namespace YoV.Services
             roster.Clear();
 
             XmlReader xmlReader = XmlReader.Create(new StringReader(result));
+
             while (xmlReader.Read())
             {
                 if (xmlReader.NodeType == XmlNodeType.Element)
@@ -807,13 +809,49 @@ namespace YoV.Services
                             Username = username,
                             NewMessages = false
                         };
-                        roster.Add(contact);
+
+                        string contactGroup = GetContactGroup(xmlReader.ReadInnerXml());
+                        bool foundGroup = false;
+                        for (int i = 0; i < roster.Count; i++)
+                        {
+                            if (roster[i].Name.Equals(contactGroup))
+                            {
+                                roster[i].Add(contact);
+                                foundGroup = true;
+                                break;
+                            }
+                        }
+
+                        if (!foundGroup)
+                        {
+                            List<Contact> newList = new List<Contact>();
+                            newList.Add(contact);
+                            roster.Add(new ContactCircle(contactGroup, newList));
+                        }
                     }
                 }
             }
 
             rosterStatus = RosterStatus.READY;
             return true;
+        }
+
+        private string GetContactGroup(string item)
+        {
+            XmlReader xmlReader = XmlReader.Create(
+                new StringReader("<root>" + item + "</root>"));
+
+            while (xmlReader.Read())
+            {
+                if (xmlReader.NodeType == XmlNodeType.Element)
+                {
+                    if (xmlReader.Name.Equals("group"))
+                    {
+                        return xmlReader.ReadElementContentAsString();
+                    }
+                }
+            }
+            return "Default";
         }
 
         private bool OnEstablish(string result)
@@ -829,7 +867,7 @@ namespace YoV.Services
             return true;
         }
 
-        public Task<List<Contact>> GetRosterAsync()
+        public Task<List<ContactCircle>> GetRosterAsync()
         {
             if (currentState == SessionState.ACTIVE)
             {
@@ -914,23 +952,36 @@ namespace YoV.Services
             }
         }
 
-        public void AddContactAsync(Contact contact)
+        public void AddContactAsync(ContactEntry contact)
         {
             if (currentState == SessionState.ACTIVE)
             {
-                string jid = contact.Username + "@" + server;
-                string name = contact.DisplayName;
+                string jid = contact.Contact.Username + "@" + server;
+                string name = contact.Contact.DisplayName;
+                string groupName = contact.CircleName;
 
                 IQSet(
                     "<query xmlns='jabber:iq:roster'><item jid='" + jid
-                    + "' name='" + name + "' /></query>",
+                    + "' name='" + name + "'><group>"
+                    + groupName + "</group></item></query>",
                     OnEmptyResponse
                 );
 
                 RequestUser(jid);
-            }
 
-            roster.Add(contact);
+                for (int i = 0; i < roster.Count; i++)
+                {
+                    if (roster[i].Name.Equals(groupName))
+                    {
+                        roster[i].Add(contact.Contact);
+                        return;
+                    }
+                }
+
+                List<Contact> newList = new List<Contact>();
+                newList.Add(contact.Contact);
+                roster.Add(new ContactCircle(groupName, newList));
+            }
         }
 
         public void SendMessageAsync(Message message)

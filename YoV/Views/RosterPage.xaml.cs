@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 using YoV.Models;
-using YoV.Views;
 using YoV.ViewModels;
 using YoV.Services;
+using System.Diagnostics;
 
 namespace YoV.Views
 {
@@ -30,11 +24,18 @@ namespace YoV.Views
 
             Device.StartTimer(TimeSpan.FromSeconds(1.0f), () =>
             {
-                Device.BeginInvokeOnMainThread(() =>
+                if (viewModel.RosterLoaded)
                 {
-                    viewModel.UpdateStateCommand.Execute(null);
-                });
-                return true;
+                    return false;
+                }
+                else
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        viewModel.LoadRosterCommand.Execute(null);
+                    });
+                    return true;
+                }
             });
         }
 
@@ -43,7 +44,7 @@ namespace YoV.Views
             NotificationEventArgs notification = (NotificationEventArgs)e;
             Device.BeginInvokeOnMainThread(() =>
                {
-                   // TODO: Update the UI view
+                   viewModel.UpdateContactState(notification);
                }
             );
         }

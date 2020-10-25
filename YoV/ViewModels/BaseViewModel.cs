@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 using Xamarin.Forms;
@@ -45,6 +46,8 @@ namespace YoV.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
+            Debug.WriteLine("Property changed " + propertyName);
+
             var changed = PropertyChanged;
             if (changed == null)
                 return;

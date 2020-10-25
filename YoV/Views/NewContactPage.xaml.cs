@@ -10,17 +10,21 @@ namespace YoV.Views
 {
     public partial class NewContactPage : ContentPage
     {
-        public Contact Contact { get; set; }
+        public ContactEntry ContactEntry { get; set; }
 
         public NewContactPage()
         {
             InitializeComponent();
 
-            Contact = new Contact
+            ContactEntry = new ContactEntry
             {
-                DisplayName = "",
-                Username = "",
-                NewMessages = false
+                Contact = new Contact
+                {
+                    DisplayName = "",
+                    Username = "",
+                    NewMessages = false
+                },
+                CircleName = ""
             };
 
             BindingContext = this;
@@ -28,7 +32,7 @@ namespace YoV.Views
 
         async void Save_Clicked(object sender, EventArgs e)
         {
-            MessagingCenter.Send(this, "AddContact", Contact);
+            MessagingCenter.Send(this, "AddContact", ContactEntry);
             await Navigation.PopModalAsync();
         }
 

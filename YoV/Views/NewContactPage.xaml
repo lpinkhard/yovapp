@@ -7,9 +7,11 @@
     <ContentPage.Content>
         <StackLayout Spacing="20" Padding="15">
             <Label Text="Display Name" FontSize="Medium" />
-            <Entry Text="{Binding Contact.DisplayName}" FontSize="Small" />
+            <Entry Text="{Binding ContactEntry.Contact.DisplayName}" FontSize="Small" />
             <Label Text="Username" FontSize="Medium" />
-            <Editor Text="{Binding Contact.Username}" FontSize="Small" Margin="0" />
+            <Editor Text="{Binding ContactEntry.Contact.Username}" FontSize="Small" />
+            <Label Text="Circle" FontSize="Medium" />
+            <Entry Text="{Binding ContactEntry.CircleName}" FontSize="Small" Margin="0" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

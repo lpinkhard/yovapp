@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -15,28 +16,38 @@ namespace YoV.ViewModels
 {
     public class RosterViewModel : BaseViewModel
     {
-        public ObservableCollection<Contact> Contacts { get; set; }
+        public ObservableCollection<ContactCircle> Contacts { get; set; }
         public Command LoadRosterCommand { get; set; }
-        public Command UpdateStateCommand { get; set; }
 
-        private bool rosterLoaded;
+        public bool RosterLoaded { get; set; }
 
         public RosterViewModel()
         {
             Title = "Contacts";
-            Contacts = new ObservableCollection<Contact>();
+            Contacts = new ObservableCollection<ContactCircle>();
 
-            rosterLoaded = false;
+            RosterLoaded = false;
 
             LoadContactCache();
 
             LoadRosterCommand = new Command(async () => await ExecuteLoadRosterCommand());
-            UpdateStateCommand = new Command(async () => await ExecuteUpdateStateCommand());
 
-            MessagingCenter.Subscribe<NewContactPage, Contact>(this, "AddContact", (obj, item) =>
+            MessagingCenter.Subscribe<NewContactPage, ContactEntry>(this, "AddContact", (obj, item) =>
             {
-                Contact newContact = item;
-                Contacts.Add(newContact);
+                ContactEntry newContact = item;
+                for (int i = 0; i < Contacts.Count; i++)
+                {
+                    if (Contacts[i].Name.Equals(newContact.CircleName))
+                    {
+                        Contacts[i].Add(newContact.Contact);
+                        XMPP.AddContactAsync(newContact);
+                        return;
+                    }
+                }
+
+                List<Contact> newList = new List<Contact>();
+                newList.Add(newContact.Contact);
+                Contacts.Add(new ContactCircle(newContact.CircleName, newList));
                 XMPP.AddContactAsync(newContact);
             });
         }
@@ -49,12 +60,26 @@ namespace YoV.ViewModels
             {
                 XmlReader contactReader = XmlReader.Create(new StringReader(contactList));
                 DataContractSerializer serializer =
-                new DataContractSerializer(typeof(ObservableCollection<Contact>));
-                Contacts = (ObservableCollection<Contact>)serializer.ReadObject(contactReader);
+                new DataContractSerializer(typeof(ObservableCollection<ContactCircle>));
+                Contacts = (ObservableCollection<ContactCircle>)serializer.ReadObject(contactReader);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+            }
+        }
+
+        internal void UpdateContactState(NotificationEventArgs notification)
+        {
+            for (int i = 0; i < Contacts.Count; i++)
+            {
+                for (int j = 0; j < Contacts[i].Count; j++)
+                {
+                    if (Contacts[i][j].DisplayName.Equals(notification.Title))
+                    {
+                        Contacts[i][j].NewMessages = true;
+                    }
+                }
             }
         }
 
@@ -64,7 +89,7 @@ namespace YoV.ViewModels
             {
                 MemoryStream contactData = new MemoryStream();
                 DataContractSerializer serializer = new
-                            DataContractSerializer(typeof(ObservableCollection<Contact>));
+                            DataContractSerializer(typeof(ObservableCollection<ContactCircle>));
                 serializer.WriteObject(contactData, Contacts);
 
                 contactData.Seek(0, SeekOrigin.Begin);
@@ -93,7 +118,7 @@ namespace YoV.ViewModels
                 }
 
                 Task<bool> result = XMPP.DidGetRoster();
-                rosterLoaded = result.Result;
+                RosterLoaded = result.Result;
 
                 SaveContactCache();
             }
@@ -104,14 +129,6 @@ namespace YoV.ViewModels
             finally
             {
                 IsBusy = false;
-            }
-        }
-
-        async Task ExecuteUpdateStateCommand()
-        {
-            if (!rosterLoaded)
-            {
-                await ExecuteLoadRosterCommand();
             }
         }
     }
