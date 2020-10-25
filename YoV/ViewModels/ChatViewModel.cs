@@ -34,7 +34,7 @@ namespace YoV.ViewModels
 
         void LoadMessageHistory()
         {
-            string messageList = Preferences.Get("messages_" + Contact.Username, "");
+            string messageList = Preferences.Get("messages_" + Contact.PhoneNumber, "");
 
             try
             {
@@ -71,7 +71,7 @@ namespace YoV.ViewModels
                 StreamReader messageReader = new StreamReader(messageData);
 
                 string messageList = messageReader.ReadToEnd();
-                Preferences.Set("messages_" + Contact.Username, messageList);
+                Preferences.Set("messages_" + Contact.PhoneNumber, messageList);
             }
             catch (Exception ex)
             {
@@ -84,7 +84,7 @@ namespace YoV.ViewModels
             Message newMessage = new Message
             {
                 Content = TextToSend,
-                User = Contact.Username,
+                User = Contact.PhoneNumber,
                 Direction = Message.MessageDirection.OUTGOING,
                 Read = true
             };

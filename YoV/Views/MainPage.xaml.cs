@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 using YoV.Models;
 using YoV.Services;
@@ -25,13 +23,13 @@ namespace YoV.Views
 
             MenuPages.Add((int)MenuItemType.Chat, (NavigationPage)Detail);
 
-            string username = Preferences.Get("username", "");
+            string phone = Preferences.Get("phone", "");
             string password = Preferences.Get("password", "");
 
-            if (username.Length > 0 && password.Length > 0)
+            if (phone.Length > 0 && password.Length > 0)
             {
                 XMPPService xmpp = DependencyService.Get<XMPPService>();
-                xmpp.Login(username, password, OnLoginOutput);
+                xmpp.Login(phone, password, OnLoginOutput);
             }
             else
             {

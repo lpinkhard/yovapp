@@ -7,8 +7,8 @@
             <ContentView Padding="0,40,0,40" VerticalOptions="FillAndExpand">
                 <Image Source="yov_logo.png" VerticalOptions="Center" />
             </ContentView>
-            <Label Text="Username" FontSize="Medium" />
-            <Entry x:Name="Username" Text="{Binding Username}" FontSize="Small" />
+            <Label Text="Phone Number" FontSize="Medium" />
+            <Entry x:Name="PhoneNumber" Text="{Binding PhoneNumber}" FontSize="Small" />
             <Label Text="Password" FontSize="Medium" />
             <Entry x:Name="Password" Text="{Binding Password}" FontSize="Small" IsPassword="True" />
             <Button Text="Login" Command="{Binding LoginCommand}" />

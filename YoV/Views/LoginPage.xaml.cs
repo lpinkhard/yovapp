@@ -15,7 +15,7 @@ namespace YoV.Views
             vm.DisplayInvalidLoginPrompt += () => DisplayAlert("Error", "Invalid credentials", "OK");
             InitializeComponent();
 
-            Username.Completed += (object sender, EventArgs e) =>
+            PhoneNumber.Completed += (object sender, EventArgs e) =>
             {
                 Password.Focus();
             };

@@ -36,7 +36,7 @@ namespace YoV.Views
             var contact = new Contact
             {
                 DisplayName = "Display Name",
-                Username = "Username",
+                PhoneNumber = "Phone Number",
                 NewMessages = false
             };
 

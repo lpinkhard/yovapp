@@ -11,20 +11,20 @@ namespace YoV.ViewModels
     {
         public Action DisplayInvalidLoginPrompt;
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
-        private string username;
+        private string phone;
         private string password;
         private INavigation navigation;
         private XMPPService xmpp;
 
         private bool IsBusy { get; set; }
 
-        public string Username
+        public string PhoneNumber
         {
-            get { return username; }
+            get { return phone; }
             set
             {
-                username = value;
-                PropertyChanged(this, new PropertyChangedEventArgs("Username"));
+                phone = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("PhoneNumber"));
             }
         }
 
@@ -54,7 +54,7 @@ namespace YoV.ViewModels
             if (!IsBusy)
             {
                 IsBusy = true;
-                Thread loginThread = new Thread(() => LoginThread(username, password));
+                Thread loginThread = new Thread(() => LoginThread(phone, password));
                 loginThread.Start();
             }
         }

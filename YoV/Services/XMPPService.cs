@@ -509,7 +509,7 @@ namespace YoV.Services
                         {
                             foreach (Contact c in cc)
                             {
-                                if (c.Username.Equals(newMessage.User))
+                                if (c.PhoneNumber.Equals(newMessage.User))
                                 {
                                     notificationManager.ScheduleNotification(
                                         c.DisplayName, newMessage.Content);
@@ -680,14 +680,14 @@ namespace YoV.Services
             IQMessage(IQMessageType.GET, message, output);
         }
 
-        public void Login(string username, string password,
+        public void Login(string phone, string password,
             Func<bool, bool> loginOutput)
         {
             StartConnection();
 
             int wait = 0;
             bool canLogin = false;
-            jid = username + "@" + server;
+            jid = phone + "@" + server;
 
             // Wait for ready to login
             do
@@ -732,7 +732,7 @@ namespace YoV.Services
 
                 if (loginSuccess)
                 {
-                    Preferences.Set("username", username);
+                    Preferences.Set("phone", phone);
                     Preferences.Set("password", password);
                 }
                 loginOutput(loginSuccess);
@@ -790,21 +790,21 @@ namespace YoV.Services
                 {
                     if (xmlReader.Name.Equals("item"))
                     {
-                        string username = xmlReader.GetAttribute("jid");
-                        int split = username.IndexOf('@');
+                        string phone = xmlReader.GetAttribute("jid");
+                        int split = phone.IndexOf('@');
                         if (split > 0)
-                            username = username.Substring(0, split);
+                            phone = phone.Substring(0, split);
 
                         string name = xmlReader.GetAttribute("name");
                         if (name == null)
                         {
-                            name = username;
+                            name = phone;
                         }
 
                         Contact contact = new Contact
                         {
                             DisplayName = name,
-                            Username = username,
+                            PhoneNumber = phone,
                             NewMessages = false
                         };
 
@@ -904,7 +904,7 @@ namespace YoV.Services
 
             for (int i = 0; i < messages.Count; i++)
             {
-                if (messages[i].User.Equals(contact.Username))
+                if (messages[i].User.Equals(contact.PhoneNumber))
                 {
                     lock(writeLock)
                     {
@@ -924,7 +924,7 @@ namespace YoV.Services
             {
                 foreach (Message msg in messages)
                 {
-                    if (msg.User.Equals(contact.Username) && !msg.Read)
+                    if (msg.User.Equals(contact.PhoneNumber) && !msg.Read)
                         return Task.FromResult(true);
                 }
             }
@@ -954,7 +954,7 @@ namespace YoV.Services
         {
             if (currentState == SessionState.ACTIVE)
             {
-                string jid = contact.Contact.Username + "@" + server;
+                string jid = contact.Contact.PhoneNumber + "@" + server;
                 string name = contact.Contact.DisplayName;
                 string groupName = contact.CircleName;
 

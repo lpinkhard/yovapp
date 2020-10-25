@@ -21,7 +21,7 @@ namespace YoV.Views
                 Contact = new Contact
                 {
                     DisplayName = "",
-                    Username = "",
+                    PhoneNumber = "",
                     NewMessages = false
                 },
                 CircleName = ""
