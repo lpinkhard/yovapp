@@ -1,125 +1,128 @@
 {
   "images": [
     {
-      "filename": "AppIcon-15.png",
+      "filename": "AppIcon40.png",
       "size": "20x20",
       "scale": "2x",
       "idiom": "iphone"
     },
     {
-      "filename": "AppIcon-14.png",
+      "filename": "AppIcon60.png",
       "size": "20x20",
       "scale": "3x",
       "idiom": "iphone"
     },
     {
-      "filename": "AppIcon-13.png",
+      "filename": "AppIcon58.png",
       "size": "29x29",
       "scale": "2x",
       "idiom": "iphone"
     },
     {
-      "filename": "AppIcon-12.png",
+      "filename": "AppIcon87.png",
       "size": "29x29",
       "scale": "3x",
       "idiom": "iphone"
     },
     {
-      "filename": "AppIcon-11.png",
+      "filename": "AppIcon80.png",
       "size": "40x40",
       "scale": "2x",
       "idiom": "iphone"
     },
     {
-      "filename": "AppIcon-10.png",
+      "filename": "AppIcon120.png",
       "size": "40x40",
       "scale": "3x",
       "idiom": "iphone"
     },
     {
-      "filename": "AppIcon-9.png",
+      "filename": "AppIcon120-1.png",
       "size": "60x60",
       "scale": "2x",
       "idiom": "iphone"
     },
     {
-      "filename": "AppIcon-8.png",
+      "filename": "AppIcon180.png",
       "size": "60x60",
       "scale": "3x",
       "idiom": "iphone"
     },
     {
-      "filename": "AppIcon-17.png",
+      "filename": "AppIcon20.png",
       "size": "20x20",
       "scale": "1x",
       "idiom": "ipad"
     },
     {
-      "filename": "AppIcon-7.png",
+      "filename": "AppIcon40-1.png",
       "size": "20x20",
       "scale": "2x",
       "idiom": "ipad"
     },
     {
-      "filename": "AppIcon-16.png",
+      "filename": "AppIcon29.png",
       "size": "29x29",
       "scale": "1x",
       "idiom": "ipad"
     },
     {
-      "filename": "AppIcon-6.png",
+      "filename": "AppIcon58-1.png",
       "size": "29x29",
       "scale": "2x",
       "idiom": "ipad"
     },
     {
-      "filename": "AppIcon-5.png",
+      "filename": "AppIcon40-2.png",
       "size": "40x40",
       "scale": "1x",
       "idiom": "ipad"
     },
     {
-      "filename": "AppIcon-4.png",
+      "filename": "AppIcon80-1.png",
       "size": "40x40",
       "scale": "2x",
       "idiom": "ipad"
     },
     {
-      "filename": "AppIcon-1.png",
+      "filename": "AppIcon167.png",
       "size": "83.5x83.5",
       "scale": "2x",
       "idiom": "ipad"
     },
     {
-      "filename": "AppIcon-3.png",
+      "filename": "AppIcon76.png",
       "size": "76x76",
       "scale": "1x",
       "idiom": "ipad"
     },
     {
-      "filename": "AppIcon-2.png",
+      "filename": "AppIcon152.png",
       "size": "76x76",
       "scale": "2x",
       "idiom": "ipad"
     },
     {
-      "filename": "AppIcon.png",
+      "filename": "AppIcon1024.png",
       "size": "1024x1024",
       "scale": "1x",
       "idiom": "ios-marketing"
     },
     {
+      "filename": "AppIcon120-2.png",
       "size": "60x60",
       "scale": "2x",
       "idiom": "car"
     },
     {
+      "filename": "AppIcon180-1.png",
       "size": "60x60",
       "scale": "3x",
       "idiom": "car"
     },
     {
       "role": "notificationCenter",
+      "filename": "AppIcon48.png",
       "size": "24x24",
       "subtype": "38mm",
       "scale": "2x",
@@ -127,6 +130,7 @@
     },
     {
       "role": "notificationCenter",
+      "filename": "AppIcon55.png",
       "size": "27.5x27.5",
       "subtype": "42mm",
       "scale": "2x",
@@ -134,18 +138,21 @@
     },
     {
       "role": "companionSettings",
+      "filename": "AppIcon58-2.png",
       "size": "29x29",
       "scale": "2x",
       "idiom": "watch"
     },
     {
       "role": "companionSettings",
+      "filename": "AppIcon87-1.png",
       "size": "29x29",
       "scale": "3x",
       "idiom": "watch"
     },
     {
       "role": "appLauncher",
+      "filename": "AppIcon80-2.png",
       "size": "40x40",
       "subtype": "38mm",
       "scale": "2x",
@@ -153,6 +160,7 @@
     },
     {
       "role": "appLauncher",
+      "filename": "AppIcon88.png",
       "size": "44x44",
       "subtype": "40mm",
       "scale": "2x",
@@ -160,6 +168,7 @@
     },
     {
       "role": "appLauncher",
+      "filename": "AppIcon100.png",
       "size": "50x50",
       "subtype": "44mm",
       "scale": "2x",
@@ -167,6 +176,7 @@
     },
     {
       "role": "quickLook",
+      "filename": "AppIcon172.png",
       "size": "86x86",
       "subtype": "38mm",
       "scale": "2x",
@@ -174,6 +184,7 @@
     },
     {
       "role": "quickLook",
+      "filename": "AppIcon196.png",
       "size": "98x98",
       "subtype": "42mm",
       "scale": "2x",
@@ -181,62 +192,74 @@
     },
     {
       "role": "quickLook",
+      "filename": "AppIcon216.png",
       "size": "108x108",
       "subtype": "44mm",
       "scale": "2x",
       "idiom": "watch"
     },
     {
+      "filename": "AppIcon1024-1.png",
       "size": "1024x1024",
       "scale": "1x",
       "idiom": "watch-marketing"
     },
     {
+      "filename": "AppIcon16.png",
       "size": "16x16",
       "scale": "1x",
       "idiom": "mac"
     },
     {
+      "filename": "AppIcon32.png",
       "size": "16x16",
       "scale": "2x",
       "idiom": "mac"
     },
     {
+      "filename": "AppIcon32-1.png",
       "size": "32x32",
       "scale": "1x",
       "idiom": "mac"
     },
     {
+      "filename": "AppIcon64.png",
       "size": "32x32",
       "scale": "2x",
       "idiom": "mac"
     },
     {
+      "filename": "AppIcon128.png",
       "size": "128x128",
       "scale": "1x",
       "idiom": "mac"
     },
     {
+      "filename": "AppIcon256.png",
       "size": "128x128",
       "scale": "2x",
       "idiom": "mac"
     },
     {
+      "filename": "AppIcon256-1.png",
       "size": "256x256",
       "scale": "1x",
       "idiom": "mac"
     },
     {
+      "filename": "AppIcon512.png",
       "size": "256x256",
       "scale": "2x",
       "idiom": "mac"
     },
     {
+      "filename": "AppIcon512-1.png",
       "size": "512x512",
       "scale": "1x",
       "idiom": "mac"
     },
     {
+      "filename": "AppIcon1024-2.png",
       "size": "512x512",
       "scale": "2x",
       "idiom": "mac"
