@@ -8,7 +8,7 @@
                 <Image Source="yov_logo.png" VerticalOptions="Center" />
             </ContentView>
             <Label Text="Phone Number" FontSize="Medium" />
-            <Entry x:Name="PhoneNumber" Text="{Binding PhoneNumber}" FontSize="Small" />
+            <Entry x:Name="PhoneNumber" Text="{Binding PhoneNumber}" FontSize="Small" Keyboard="Telephone" />
             <Label Text="Password" FontSize="Medium" />
             <Entry x:Name="Password" Text="{Binding Password}" FontSize="Small" IsPassword="True" />
             <Label Text="Confirm Password" FontSize="Medium" />

@@ -9,7 +9,8 @@
             <Label Text="Display Name" FontSize="Medium" />
             <Entry Text="{Binding ContactEntry.Contact.DisplayName}" FontSize="Small" />
             <Label Text="Phone Number" FontSize="Medium" />
-            <Editor Text="{Binding ContactEntry.Contact.PhoneNumber}" FontSize="Small" />
+            <Entry Text="{Binding ContactEntry.Contact.PhoneNumber}"
+                   FontSize="Small" Keyboard="Telephone" />
             <Label Text="Circle" FontSize="Medium" />
             <Entry Text="{Binding ContactEntry.CircleName}" FontSize="Small" Margin="0" />
         </StackLayout>
