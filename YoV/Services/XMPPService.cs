@@ -37,7 +37,6 @@ namespace YoV.Services
         private Queue<string> requestQueue;
         private List<Message> messages;
         private static readonly object writeLock = new object();
-        private long lastKeepalive;
         private bool pendingMessages;
         private bool historyLoaded;
         private bool didGetRoster;
@@ -103,7 +102,6 @@ namespace YoV.Services
             jid = "";
             rosterStatus = RosterStatus.READY;
             requestQueue = new Queue<string>();
-            lastKeepalive = DateTimeOffset.Now.ToUnixTimeSeconds();
             messages = new List<Message>();
             pendingMessages = false;
             historyLoaded = false;
