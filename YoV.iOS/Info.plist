@@ -25,7 +25,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>YoV</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.yov.YoV</string>
+	<string>com.myyov.YoV</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>UILaunchStoryboardName</key>
