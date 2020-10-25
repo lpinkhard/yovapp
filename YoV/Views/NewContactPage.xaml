@@ -8,8 +8,8 @@
         <StackLayout Spacing="20" Padding="15">
             <Label Text="Display Name" FontSize="Medium" />
             <Entry Text="{Binding ContactEntry.Contact.DisplayName}" FontSize="Small" />
-            <Label Text="Username" FontSize="Medium" />
-            <Editor Text="{Binding ContactEntry.Contact.Username}" FontSize="Small" />
+            <Label Text="Phone Number" FontSize="Medium" />
+            <Editor Text="{Binding ContactEntry.Contact.PhoneNumber}" FontSize="Small" />
             <Label Text="Circle" FontSize="Medium" />
             <Entry Text="{Binding ContactEntry.CircleName}" FontSize="Small" Margin="0" />
         </StackLayout>
