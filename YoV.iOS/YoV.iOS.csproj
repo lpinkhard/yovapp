@@ -73,45 +73,6 @@
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon1024.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon180.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon167.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon152.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon120.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon87.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon80.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon76.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon60.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon58.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon40.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon29.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon20.png">
-      <Visible>false</Visible>
-    </ImageAsset>
     <BundleResource Include="Resources\tab_about.png" />
     <BundleResource Include="Resources\tab_about%402x.png" />
     <BundleResource Include="Resources\tab_about%403x.png" />
@@ -124,6 +85,24 @@
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
     <ImageAsset Include="Assets.xcassets\yov_logo.imageset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\yov_logo.imageset\yov_logo.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-1.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-2.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-3.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-4.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-5.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-6.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-7.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-8.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-9.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-10.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-11.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-12.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-13.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-14.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-15.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-16.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-17.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
