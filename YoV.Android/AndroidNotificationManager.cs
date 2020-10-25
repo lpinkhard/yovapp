@@ -69,6 +69,7 @@ namespace YoV.Droid
                 Title = title,
                 Message = message,
             };
+            
             NotificationReceived?.Invoke(null, args);
         }
 
