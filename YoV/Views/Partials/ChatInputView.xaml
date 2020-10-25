@@ -11,7 +11,7 @@
             </Grid.ColumnDefinitions>
             <Entry x:Name="chatTextInput" 
                  Text="{Binding TextToSend}" 
-                 Margin="1"  
+                 Margin="10"
                  TextColor="Black" 
                  Keyboard="Chat"  
                  HorizontalOptions="FillAndExpand" 

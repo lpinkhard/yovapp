@@ -23,6 +23,6 @@
                  HeightRequest="1"
                  BackgroundColor="LightGray"
                  Grid.Row="1" />
-        <partials:ChatInputView Grid.Row="2" Margin="0,0,10,0" />
+        <partials:ChatInputView Grid.Row="2" Margin="0,0,10,0" Padding="0,0,0,25" />
     </Grid>
 </ContentPage>

@@ -7,8 +7,10 @@
             <ContentView Padding="0,40,0,40" VerticalOptions="FillAndExpand">
                 <Image Source="yov_logo.png" VerticalOptions="Center" />
             </ContentView>
-            <Button Text="Login" Command="{Binding LoginCommand}" />
-            <Button Text="Register" Command="{Binding RegisterCommand}" />
+            <StackLayout Orientation="Vertical" Padding="40" Spacing="20">
+                <Button Text="Login" Command="{Binding LoginCommand}" FontSize="24" />
+                <Button Text="Register" Command="{Binding RegisterCommand}" FontSize="24" />
+            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
