@@ -33,7 +33,7 @@ namespace YoV.Views
             }
             else
             {
-                Navigation.PushModalAsync(new LoginPage());
+                Navigation.PushModalAsync(new LoginSelectPage());
             }
         }
 
@@ -41,7 +41,7 @@ namespace YoV.Views
         {
             if (!success)
             {
-                Navigation.PushModalAsync(new LoginPage());
+                Navigation.PushModalAsync(new LoginSelectPage());
             }
             return true;
         }

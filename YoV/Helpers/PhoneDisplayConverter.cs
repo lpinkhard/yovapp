@@ -40,16 +40,25 @@ namespace YoV.Helpers
                 return "";  // Not valid
 
             int index = 0;
-            if (internalLength % 3 == 0)
+            if (internalLength == 9)
             {
-                while (internalLength - index > 0)
-                {
-                    output.Append(internalNumber.Substring(index, 3) + " ");
-                    index += 3;
-                }
+                output.Append(internalNumber.Substring(0, 2) + " ");
+                output.Append(internalNumber.Substring(2, 3) + " ");
+                output.Append(internalNumber.Substring(5, 4));
             }
             else if (internalLength % 4 == 0)
             {
+                while (internalLength - index > 0)
+                {
+                    output.Append(internalNumber.Substring(index, 4) + " ");
+                    index += 4;
+                }
+            }
+            else if ((internalLength - 6) % 4 == 0)
+            {
+                output.Append(internalNumber.Substring(0, 3) + " ");
+                output.Append(internalNumber.Substring(3, 3) + " ");
+                index = 6;
                 while (internalLength - index > 0)
                 {
                     output.Append(internalNumber.Substring(index, 4) + " ");
@@ -74,6 +83,14 @@ namespace YoV.Helpers
                 {
                     output.Append(internalNumber.Substring(index, 4) + " ");
                     index += 4;
+                }
+            }
+            else if (internalLength % 3 == 0)
+            {
+                while (internalLength - index > 0)
+                {
+                    output.Append(internalNumber.Substring(index, 3) + " ");
+                    index += 3;
                 }
             }
             else if (internalLength % 2 == 0)

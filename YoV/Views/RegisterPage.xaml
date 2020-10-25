@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>  
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"  
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
+             x:Class="YoV.Views.RegisterPage">
+    <ContentPage.Content>
+        <StackLayout Spacing="20" Padding="15">
+            <ContentView Padding="0,40,0,40" VerticalOptions="FillAndExpand">
+                <Image Source="yov_logo.png" VerticalOptions="Center" />
+            </ContentView>
+            <Label Text="Phone Number" FontSize="Medium" />
+            <Entry x:Name="PhoneNumber" Text="{Binding PhoneNumber}" FontSize="Small" />
+            <Label Text="Password" FontSize="Medium" />
+            <Entry x:Name="Password" Text="{Binding Password}" FontSize="Small" IsPassword="True" />
+            <Label Text="Confirm Password" FontSize="Medium" />
+            <Entry x:Name="ConfirmPassword" Text="{Binding ConfirmPassword}" FontSize="Small" IsPassword="True" />
+            <Button Text="Register" Command="{Binding RegisterCommand}" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

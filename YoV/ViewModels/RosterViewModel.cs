@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-
+using YoV.Helpers;
 using YoV.Models;
 using YoV.Views;
 
@@ -35,6 +35,11 @@ namespace YoV.ViewModels
             MessagingCenter.Subscribe<NewContactPage, ContactEntry>(this, "AddContact", (obj, item) =>
             {
                 ContactEntry newContact = item;
+
+                newContact.Contact.PhoneNumber =
+                    (string) new PhoneDisplayConverter().ConvertBack(
+                    newContact.Contact.PhoneNumber, null, null, null);
+
                 for (int i = 0; i < Contacts.Count; i++)
                 {
                     if (Contacts[i].Name.Equals(newContact.CircleName))

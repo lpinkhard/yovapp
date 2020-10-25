@@ -7,12 +7,14 @@ using YoV.Services;
 
 namespace YoV.ViewModels
 {
-    public class LoginViewModel : INotifyPropertyChanged
+    public class RegisterViewModel : INotifyPropertyChanged
     {
-        public Action DisplayInvalidLoginPrompt;
+        public Action DisplayInvalidDetailsPrompt;
+        public Action DisplayPasswordMismatchPrompt;
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
         private string phone;
         private string password;
+        private string confirm;
         private INavigation navigation;
         private XMPPService xmpp;
 
@@ -38,33 +40,50 @@ namespace YoV.ViewModels
             }
         }
 
-        public ICommand LoginCommand { protected set; get; }
+        public string ConfirmPassword
+        {
+            get { return confirm; }
+            set
+            {
+                confirm = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("ConfirmPassword"));
+            }
+        }
 
-        public LoginViewModel(INavigation navigation)
+        public ICommand RegisterCommand { protected set; get; }
+
+        public RegisterViewModel(INavigation navigation)
         {
             this.navigation = navigation;
             this.xmpp = DependencyService.Get<XMPPService>();
 
             IsBusy = false;
-            LoginCommand = new Command(OnLogin);
+            RegisterCommand = new Command(OnRegister);
         }
 
-        public void OnLogin()
+        public void OnRegister()
         {
-            if (!IsBusy)
+            if (password == confirm)
             {
-                IsBusy = true;
-                Thread loginThread = new Thread(() => LoginThread(phone, password));
-                loginThread.Start();
+                if (!IsBusy)
+                {
+                    IsBusy = true;
+                    Thread registerThread = new Thread(() => RegisterThread(phone, password));
+                    registerThread.Start();
+                }
+            }
+            else
+            {
+                DisplayPasswordMismatchPrompt();
             }
         }
 
-        private void LoginThread(string username, string password)
+        private void RegisterThread(string username, string password)
         {
-            xmpp.Login(username, password, OnLoginResult);
+            xmpp.Register(username, password, OnRegisterResult);
         }
 
-        public bool OnLoginResult(bool success)
+        public bool OnRegisterResult(bool success)
         {
             if (success)
             {
@@ -76,7 +95,7 @@ namespace YoV.ViewModels
             }
             else
             {
-                DisplayInvalidLoginPrompt();
+                DisplayInvalidDetailsPrompt();
             }
 
             IsBusy = false;

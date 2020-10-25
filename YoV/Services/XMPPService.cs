@@ -27,9 +27,11 @@ namespace YoV.Services
         private bool connected;
         private SessionState currentState;
         private LoginStatus loginStatus;
+        private RegisterStatus registerStatus;
         private List<AuthMechanism> authMechanisms;
         private int nextIQ;
         private List<IQRequest> iqRequests;
+        private List<IQRequest> iqErrRequests;
         private bool resourceBinding;
         private bool usesSessions;
         private string jid;
@@ -69,6 +71,14 @@ namespace YoV.Services
             FAILURE
         }
 
+        private enum RegisterStatus
+        {
+            PENDING_GET,
+            PENDING_SET,
+            SUCCESS,
+            FAILURE
+        }
+
         private enum RosterStatus
         {
             READY,
@@ -95,8 +105,10 @@ namespace YoV.Services
             currentState = SessionState.DISCONNECTED;
             authMechanisms = new List<AuthMechanism>();
             loginStatus = LoginStatus.PENDING;
+            registerStatus = RegisterStatus.PENDING_GET;
             nextIQ = 1;
             iqRequests = new List<IQRequest>();
+            iqErrRequests = new List<IQRequest>();
             resourceBinding = false;
             usesSessions = false;
             jid = "";
@@ -199,16 +211,6 @@ namespace YoV.Services
         {
             do
             {
-                /* if (requestQueue.Count == 0)
-                {
-                    long timeNow = DateTimeOffset.Now.ToUnixTimeSeconds();
-                    if (timeNow > lastKeepalive + 5)
-                    {
-                        lastKeepalive = timeNow;
-                        streamWriter.Write("\n");
-                        streamWriter.Flush();
-                    }
-                } */
                 while (requestQueue.Count > 0)
                 {
                     string stanza = requestQueue.Dequeue();
@@ -244,7 +246,7 @@ namespace YoV.Services
             do
             {
                 string stanza = ReadStanza(reader);
-                if (stanza == null)
+                if (stanza == null || stanza.Contains("<stream:error"))
                 {
                     threadRunning = false;
                     break;
@@ -342,6 +344,12 @@ namespace YoV.Services
                                     loginStatus = LoginStatus.FAILURE;
                                     currentState = SessionState.CONNECTED;
                                     ResetStream();
+                                }
+                                else if (responseReader.Name.Equals("iq"))
+                                {
+                                    handleIQ(responseReader.GetAttribute("id"),
+                                        responseReader.GetAttribute("type"),
+                                        responseReader.ReadInnerXml());
                                 }
                             }
                         }
@@ -469,7 +477,24 @@ namespace YoV.Services
                     }
                 }
 
-                if (iqRequest != null)
+                if (iqRequest != null && iqRequest.Output != null)
+                {
+                    iqRequest.Output(message);
+                    iqRequests.Remove(iqRequest);
+                }
+            }
+            else if (msgType.Equals("error"))
+            {
+                foreach (IQRequest request in iqErrRequests)
+                {
+                    if (request.ID.ToString().Equals(msgID))
+                    {
+                        iqRequest = request;
+                        break;
+                    }
+                }
+
+                if (iqRequest != null && iqRequest.Output != null)
                 {
                     iqRequest.Output(message);
                     iqRequests.Remove(iqRequest);
@@ -637,7 +662,7 @@ namespace YoV.Services
         }
 
         private void IQMessage(IQMessageType messageType, string message,
-            Func<string, bool> output)
+            Func<string, bool> output, Func<string, bool> errOutput = null)
         {
             int requestID = nextIQ++;
 
@@ -648,6 +673,14 @@ namespace YoV.Services
             };
 
             iqRequests.Add(request);
+
+            IQRequest errRequest = new IQRequest
+            {
+                ID = requestID,
+                Output = errOutput
+            };
+
+            iqErrRequests.Add(errRequest);
 
             string iqHead = "<iq id='" + requestID + "' type='";
             string iqType = null;
@@ -670,14 +703,16 @@ namespace YoV.Services
             WriteStanza(iqHead + iqType + iqMid + message + iqTail);
         }
 
-        private void IQSet(string message, Func<string, bool> output)
+        private void IQSet(string message, Func<string, bool> output,
+            Func<string, bool> errOutput = null)
         {
-            IQMessage(IQMessageType.SET, message, output);
+            IQMessage(IQMessageType.SET, message, output, errOutput);
         }
 
-        private void IQGet(string message, Func<string, bool> output)
+        private void IQGet(string message, Func<string, bool> output,
+            Func<string, bool> errOutput = null)
         {
-            IQMessage(IQMessageType.GET, message, output);
+            IQMessage(IQMessageType.GET, message, output, errOutput);
         }
 
         public void Login(string phone, string password,
@@ -698,6 +733,7 @@ namespace YoV.Services
                     canLogin = true;
                     loginStatus = LoginStatus.PENDING;
                 }
+                wait++;
             } while (wait < 600 && !canLogin);
             wait = 0;
 
@@ -742,6 +778,104 @@ namespace YoV.Services
                 StopConnection();
                 loginOutput(false);
             }
+        }
+
+        public void Register(string phone, string password,
+            Func<bool, bool> registerOutput)
+        {
+            StartConnection();
+
+            int wait = 0;
+            bool canRegister = false;
+            jid = phone + "@" + server;
+
+            // Wait for ready to register
+            do
+            {
+                Thread.Sleep(100);
+                if (currentState == SessionState.PRE_AUTH)
+                {
+                    canRegister = true;
+                    registerStatus = RegisterStatus.PENDING_GET;
+                }
+                wait++;
+            } while (wait < 600 && !canRegister);
+            wait = 0;
+
+            if (currentState == SessionState.PRE_AUTH)
+            {
+                string registerGetMessage = "<query xmlns='jabber:iq:register' />";
+
+                IQGet(registerGetMessage, OnRegisterGet, OnRegisterError);
+
+                // Wait for register get outcome
+                bool registerGetSuccess = false;
+                do
+                {
+                    Thread.Sleep(100);
+                    if (registerStatus == RegisterStatus.PENDING_SET)
+                        registerGetSuccess = true;
+                } while (wait < 600 && registerStatus == RegisterStatus.PENDING_GET);
+
+                if (registerGetSuccess)
+                {
+                    string registerSetMessage = "<query xmlns='jabber:iq:register'>"
+                        + "<username>" + phone + "</username><password>"
+                        + password + "</password></query>";
+
+                    IQSet(registerSetMessage, OnRegisterSet, OnRegisterError);
+
+                    bool registerSetSuccess = false;
+                    do
+                    {
+                        Thread.Sleep(100);
+                        if (registerStatus == RegisterStatus.SUCCESS)
+                            registerSetSuccess = true;
+                        wait++;
+                    } while (wait < 600 && registerStatus == RegisterStatus.PENDING_SET);
+
+                    if (registerSetSuccess)
+                    {
+                        Login(phone, password, registerOutput);
+                    }
+                    else
+                    {
+                        registerOutput(false);
+                    }
+                }
+                else
+                {
+                    registerOutput(false);
+                }
+            }
+            else
+            {
+                StopConnection();
+                registerOutput(false);
+            }
+        }
+
+        private bool OnRegisterError(string _)
+        {
+            registerStatus = RegisterStatus.FAILURE;
+
+            return true;
+        }
+
+        private bool OnRegisterSet(string _)
+        {
+            registerStatus = RegisterStatus.SUCCESS;
+
+            return true;
+        }
+
+        private bool OnRegisterGet(string _)
+        {
+            // TODO: Check the response and reply accordingly
+
+            registerStatus = RegisterStatus.PENDING_SET;
+
+            return true;
         }
 
         private bool OnBind(string result)
