@@ -12,5 +12,6 @@ namespace YoV.Models
         public string User { get; set; }
         public string Content { get; set; }
         public MessageDirection Direction { get; set; }
+        public bool Read { get; set; }
     }
 }

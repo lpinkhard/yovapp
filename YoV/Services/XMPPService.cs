@@ -4,13 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Linq;
 using Xamarin.Essentials;
 using YoV.Models;
 
@@ -42,6 +39,8 @@ namespace YoV.Services
         private List<Message> messages;
         private static readonly object writeLock = new object();
         private long lastKeepalive;
+        private bool pendingMessages;
+        private bool historyLoaded;
 
         private enum AuthMechanism
         {
@@ -107,6 +106,8 @@ namespace YoV.Services
             requestQueue = new Queue<string>();
             lastKeepalive = DateTimeOffset.Now.ToUnixTimeSeconds();
             messages = new List<Message>();
+            pendingMessages = false;
+            historyLoaded = false;
         }
 
         private string ReadStanza(StreamReader reader)
@@ -495,13 +496,15 @@ namespace YoV.Services
                         {
                             User = msgSender.Substring(0, msgSender.IndexOf("@")),
                             Content = content,
-                            Direction = Message.MessageDirection.INCOMING
+                            Direction = Message.MessageDirection.INCOMING,
+                            Read = false
                         };
 
                         lock (writeLock)
                         {
-                            Debug.WriteLine(msgSender);
                             messages.Add(newMessage);
+
+                            pendingMessages = true;
                         }
                     }
                 }
@@ -835,15 +838,53 @@ namespace YoV.Services
         {
             List<Message> contactMessages = new List<Message>();
 
-            foreach (Message msg in messages)
+            for (int i = 0; i < messages.Count; i++)
             {
-                if (msg.User.Equals(contact.Username))
+                if (messages[i].User.Equals(contact.Username))
                 {
-                    contactMessages.Add(msg);
+                    lock(writeLock)
+                    {
+                        messages[i].Read = true;
+                        pendingMessages = false;
+                    }
+
+                    contactMessages.Add(messages[i]);
                 }
             }
 
             return Task.FromResult(contactMessages);
+        }
+
+        public Task<bool> HasNewMessages(Contact contact)
+        {
+            if (pendingMessages)
+            {
+                foreach (Message msg in messages)
+                {
+                    if (msg.User.Equals(contact.Username) && !msg.Read)
+                        return Task.FromResult(true);
+                }
+            }
+
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> IsHistoryLoaded()
+        {
+            bool loaded = historyLoaded;
+
+            lock (writeLock)
+                historyLoaded = true;
+
+            return Task.FromResult(loaded);
+        }
+
+        public void LoadHistoryItem(Message msg)
+        {
+            lock (writeLock)
+            {
+                messages.Add(msg);
+            }
         }
 
         public void AddContactAsync(Contact contact)

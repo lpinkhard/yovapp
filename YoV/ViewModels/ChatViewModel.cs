@@ -47,6 +47,15 @@ namespace YoV.ViewModels
             {
                 Debug.WriteLine(ex);
             }
+
+            Task<bool> historyLoaded = XMPP.IsHistoryLoaded();
+            if (!historyLoaded.Result)
+            {
+                foreach (Message msg in Messages)
+                {
+                    XMPP.LoadHistoryItem(msg);
+                }
+            }
         }
 
         void SaveMessageHistory()
@@ -76,7 +85,8 @@ namespace YoV.ViewModels
             {
                 Content = TextToSend,
                 User = Contact.Username,
-                Direction = Message.MessageDirection.OUTGOING
+                Direction = Message.MessageDirection.OUTGOING,
+                Read = true
             };
 
             TextToSend = string.Empty;
@@ -99,6 +109,8 @@ namespace YoV.ViewModels
                 var messages = await XMPP.GetMessagesAsync(Contact);
                 if (messages.Count != oldCount)
                 {
+                    Messages.Clear();
+
                     foreach (var msg in messages)
                     {
                         if (!Messages.Contains(msg))
