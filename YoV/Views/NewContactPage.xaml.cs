@@ -19,7 +19,8 @@ namespace YoV.Views
             Contact = new Contact
             {
                 DisplayName = "",
-                Username = ""
+                Username = "",
+                NewMessages = false
             };
 
             BindingContext = this;

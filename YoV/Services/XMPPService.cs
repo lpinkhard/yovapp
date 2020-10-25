@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using Xamarin.Essentials;
+using Xamarin.Forms;
 using YoV.Models;
 
 namespace YoV.Services
@@ -41,6 +42,8 @@ namespace YoV.Services
         private long lastKeepalive;
         private bool pendingMessages;
         private bool historyLoaded;
+        private bool didGetRoster;
+        private INotificationManager notificationManager;
 
         private enum AuthMechanism
         {
@@ -108,6 +111,8 @@ namespace YoV.Services
             messages = new List<Message>();
             pendingMessages = false;
             historyLoaded = false;
+            didGetRoster = false;
+            notificationManager = DependencyService.Get<INotificationManager>();
         }
 
         private string ReadStanza(StreamReader reader)
@@ -506,6 +511,16 @@ namespace YoV.Services
 
                             pendingMessages = true;
                         }
+
+                        foreach (Contact c in roster)
+                        {
+                            if (c.Username.Equals(newMessage.User))
+                            {
+                                notificationManager.ScheduleNotification(
+                                    c.DisplayName, newMessage.Content);
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -789,7 +804,8 @@ namespace YoV.Services
                         Contact contact = new Contact
                         {
                             DisplayName = name,
-                            Username = username
+                            Username = username,
+                            NewMessages = false
                         };
                         roster.Add(contact);
                     }
@@ -829,9 +845,21 @@ namespace YoV.Services
                     Thread.Sleep(100);
                     wait++;
                 } while (rosterStatus != RosterStatus.READY && wait < 600);
+
+                if (rosterStatus == RosterStatus.READY)
+                    didGetRoster = true;
+            }
+            else
+            {
+                didGetRoster = false;
             }
 
             return Task.FromResult(roster);
+        }
+
+        public Task<bool> DidGetRoster()
+        {
+            return Task.FromResult(didGetRoster);
         }
 
         public Task<List<Message>> GetMessagesAsync(Contact contact)
@@ -845,7 +873,6 @@ namespace YoV.Services
                     lock(writeLock)
                     {
                         messages[i].Read = true;
-                        pendingMessages = false;
                     }
 
                     contactMessages.Add(messages[i]);

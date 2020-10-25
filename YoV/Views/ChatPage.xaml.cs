@@ -36,7 +36,8 @@ namespace YoV.Views
             var contact = new Contact
             {
                 DisplayName = "Display Name",
-                Username = "Username"
+                Username = "Username",
+                NewMessages = false
             };
 
             viewModel = new ChatViewModel(contact);

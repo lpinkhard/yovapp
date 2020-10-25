@@ -17,15 +17,21 @@ namespace YoV.ViewModels
     {
         public ObservableCollection<Contact> Contacts { get; set; }
         public Command LoadRosterCommand { get; set; }
+        public Command UpdateStateCommand { get; set; }
+
+        private bool rosterLoaded;
 
         public RosterViewModel()
         {
             Title = "Contacts";
             Contacts = new ObservableCollection<Contact>();
 
+            rosterLoaded = false;
+
             LoadContactCache();
 
             LoadRosterCommand = new Command(async () => await ExecuteLoadRosterCommand());
+            UpdateStateCommand = new Command(async () => await ExecuteUpdateStateCommand());
 
             MessagingCenter.Subscribe<NewContactPage, Contact>(this, "AddContact", (obj, item) =>
             {
@@ -86,6 +92,9 @@ namespace YoV.ViewModels
                     Contacts.Add(contact);
                 }
 
+                Task<bool> result = XMPP.DidGetRoster();
+                rosterLoaded = result.Result;
+
                 SaveContactCache();
             }
             catch (Exception ex)
@@ -95,6 +104,14 @@ namespace YoV.ViewModels
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        async Task ExecuteUpdateStateCommand()
+        {
+            if (!rosterLoaded)
+            {
+                await ExecuteLoadRosterCommand();
             }
         }
     }

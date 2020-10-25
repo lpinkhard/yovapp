@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using Xamarin.Forms;
 
 namespace YoV.Models
 {
@@ -6,5 +8,6 @@ namespace YoV.Models
     {
         public string DisplayName { get; set; }
         public string Username { get; set; }
+        public bool NewMessages { get; set; }
     }
 }
