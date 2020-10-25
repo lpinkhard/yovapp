@@ -46,8 +46,6 @@ namespace YoV.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            Debug.WriteLine("Property changed " + propertyName);
-
             var changed = PropertyChanged;
             if (changed == null)
                 return;
