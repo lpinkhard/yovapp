@@ -17,6 +17,8 @@ namespace YoV.Views
             InitializeComponent();
 
             BindingContext = viewModel = new RosterViewModel();
+            viewModel.DisplayMaxContacts += () => DisplayAlert("Error",
+                "Maximum contacts reached", "OK");
 
             INotificationManager notificationManager =
                 DependencyService.Get<INotificationManager>();

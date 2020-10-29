@@ -18,6 +18,7 @@ namespace YoV.ViewModels
     {
         public ObservableCollection<ContactCircle> Contacts { get; set; }
         public Command LoadRosterCommand { get; set; }
+        public Action DisplayMaxContacts;
 
         public bool RosterLoaded { get; set; }
 
@@ -44,6 +45,11 @@ namespace YoV.ViewModels
                 {
                     if (Contacts[i].Name.Equals(newContact.CircleName))
                     {
+                        if (Contacts[i].Count >= 4)
+                        {
+                            DisplayMaxContacts();
+                            return;
+                        }
                         Contacts[i].Add(newContact.Contact);
                         XMPP.AddContactAsync(newContact);
                         return;
